@@ -30,7 +30,7 @@
 		
 		public function addOrder($orderCode,$tableNo,$nameList,$qtyList,$priceList,$orderTotal){
 			//$password = md5($pass);
-			if($this->isUserExist($orderCode)){
+			if($this->isOrderExist($orderCode)){
 				return 0;
 			}else{
 				$stmt = $this->conn->prepare("INSERT INTO `tbl_orders` (`id`, `OrderCode`, `TableNo`, `FoodName`, `FoodQty`, `FoodPrice`, `OrderTotal`) 
@@ -63,6 +63,14 @@
 		private function isUserExist($username,$email){
 			$stmt = $this->conn->prepare("SELECT id FROM tbl_users WHERE Username = ? OR Email = ?");
 			$stmt->bind_param("ss", $username, $email);
+			$stmt->execute();
+			$stmt->store_result();
+			return $stmt->num_rows > 0;
+		}
+		
+		private function isOrderExist($orderCode){
+			$stmt = $this->conn->prepare("SELECT id FROM tbl_orders WHERE OrderCode = ?");
+			$stmt->bind_param("s", $orderCode);
 			$stmt->execute();
 			$stmt->store_result();
 			return $stmt->num_rows > 0;
